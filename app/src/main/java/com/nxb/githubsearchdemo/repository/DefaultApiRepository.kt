@@ -16,8 +16,7 @@ import javax.inject.Inject
 created on 6/22/21
  **/
 
-@OpenForTesting
-class DefaultApiRepository @Inject constructor(val api: RepoApi) : ApiRepository {
+ class DefaultApiRepository @Inject constructor(val api: RepoApi) : ApiRepository {
 
     override suspend fun getSearches(query: String,page :String): Resource<GithubResponse> {
         val response = api.getSearches(query,page = page)

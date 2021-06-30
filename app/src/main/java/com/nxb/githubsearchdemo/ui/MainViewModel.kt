@@ -28,12 +28,10 @@ class MainViewModel @Inject constructor(val apiRepository: ApiRepository) : View
 
     var githubResponse: LiveData<Event<Resource<GithubResponse>>> = _query.switchMap {
 
-        if (it.isEmpty()) {
-            AbsentLiveData.create()
-        } else {
+
             searchForRepo(it)
             _githubResponse
-        }
+
     }
 
 

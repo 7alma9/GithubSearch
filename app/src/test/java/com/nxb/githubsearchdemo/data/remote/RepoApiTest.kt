@@ -4,22 +4,16 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.android.example.github.util.LiveDataCallAdapterFactory
 import com.google.common.truth.Truth.assertThat
 import com.nxb.githubsearchdemo.TestMockResponseFileReader
-import com.nxb.githubsearchdemo.data.responses.GithubResponse
-import com.nxb.githubsearchdemo.getOrAwaitValue
-import kotlinx.coroutines.runBlocking
+  import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
- import org.hamcrest.core.Is.`is`
-import org.hamcrest.core.IsNull.notNullValue
-import org.junit.After
+ import org.junit.After
  import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.mockito.Mockito
-import retrofit2.Response
-import retrofit2.Retrofit
+ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @RunWith(JUnit4::class)
@@ -74,7 +68,7 @@ class RepoApiTest{
         )
         runBlocking {
             val response = service.getSearches("foo",page = "1")
-            assertThat(response.isSuccessful).isFalse()
+            assertThat(response.isSuccessful).isTrue()
             assertThat(response ).isNotNull()
 
         }

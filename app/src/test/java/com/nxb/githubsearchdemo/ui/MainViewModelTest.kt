@@ -55,18 +55,19 @@ class MainViewModelTest {
         repoViewModel.setQuery("hi")
 
         runBlocking {
-            verify(defaultApiRepository, never()).getSearches(Mockito.anyString(), Mockito.anyString())
+            verify(defaultApiRepository, never() ).getSearches("hi", "1")
         }
     }
 
     @Test
     fun setObserverCanSearch() {
 
-        repoViewModel.setQuery("hi")
         repoViewModel.githubResponse.observeForever(mock())
+        repoViewModel.setQuery("hi")
+
 
         runBlocking {
-            verify(defaultApiRepository).getSearches(Mockito.anyString(), Mockito.anyString())
+            verify(defaultApiRepository).getSearches("hi", "1")
         }
     }
 
@@ -139,12 +140,13 @@ class MainViewModelTest {
 
         val observer = mock<Observer<Event<Resource<GithubResponse>>>>()
         repoViewModel.githubResponse.observeForever(observer)
-        repoViewModel.setQuery("hi")
 
         runBlocking {
 
             `when`(defaultApiRepository.getSearches("hi","1")).thenReturn(nextPage)
-               verify(defaultApiRepository).getSearches("hi","1")
+            repoViewModel.setQuery("hi")
+
+            verify(defaultApiRepository).getSearches("hi","1")
             assertThat(defaultApiRepository.getSearches("hi","1").data).isEqualTo(githubResponse)
 
         }

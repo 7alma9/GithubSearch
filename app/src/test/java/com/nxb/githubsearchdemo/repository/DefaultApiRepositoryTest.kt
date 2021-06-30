@@ -90,6 +90,23 @@ class DefaultApiRepositoryTest {
 
     }
 
+    @Test
+    fun testResponseBodyNull() {
+
+        service = mock()
+        defaultApiRepository = DefaultApiRepository(service)
+
+        runBlocking {
+            val mockResponseBody = Mockito.mock(GithubResponse::class.java)
+            val mockResponse = Response.success(mockResponseBody)
+            Mockito.`when`(service.getSearches("hi", page = "1")).thenReturn(mockResponse)
+            val resp = defaultApiRepository.getSearches("hi", page = "1")
+            assertThat(resp).isEqualTo(Resource.success(mockResponse.body()))
+
+        }
+
+    }
+
     private fun enqueueResponse(fileName: String, headers: Map<String, String> = emptyMap()) {
 
         val source = TestMockResponseFileReader(fileName)

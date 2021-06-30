@@ -1,9 +1,10 @@
 package com.nxb.githubsearchdemo.data.responses
 
 import com.google.gson.annotations.SerializedName
+import com.nxb.githubsearchdemo.OpenForTesting
 
 
-data class GithubResponse(
+ data class GithubResponse(
     @SerializedName("incomplete_results")
     val incompleteResults: Boolean,
     @SerializedName("items")
@@ -12,7 +13,8 @@ data class GithubResponse(
     val totalCount: Int
 )
 
-data class Item(
+
+ data class Item(
 
     @SerializedName("html_url")
     val htmlUrl: String,
@@ -27,7 +29,7 @@ data class Item(
 )
 
 
-data class Owner(
+ data class Owner(
     @SerializedName("avatar_url")
     val avatarUrl: String
 )
