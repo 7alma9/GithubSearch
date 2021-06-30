@@ -14,6 +14,9 @@ import com.nxb.githubsearchdemo.other.Resource
 import com.nxb.githubsearchdemo.other.Status
 import com.nxb.githubsearchdemo.util.TestUtils
 import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Before
@@ -97,11 +100,46 @@ class DefaultApiRepositoryTest {
         defaultApiRepository = DefaultApiRepository(service)
 
         runBlocking {
-            val mockResponseBody = Mockito.mock(GithubResponse::class.java)
+            val mockResponseBody:GithubResponse? =null
             val mockResponse = Response.success(mockResponseBody)
             Mockito.`when`(service.getSearches("hi", page = "1")).thenReturn(mockResponse)
             val resp = defaultApiRepository.getSearches("hi", page = "1")
-            assertThat(resp).isEqualTo(Resource.success(mockResponse.body()))
+            assertThat(resp).isEqualTo(Resource.error("Something Went Wrong body is null", null))
+
+        }
+
+    }
+    @Test
+    fun testResponseNotSuccessfull() {
+
+        service = mock()
+        defaultApiRepository = DefaultApiRepository(service)
+
+        runBlocking {
+
+            val errorResponse = Response.error<GithubResponse>(
+                400,
+                "Something Went Wrong response failed".toResponseBody("application/txt".toMediaTypeOrNull())
+            )
+            Mockito.`when`(service.getSearches("hi", page = "1")).thenReturn(errorResponse)
+            val resp = defaultApiRepository.getSearches("hi", page = "1")
+            assertThat(resp).isEqualTo(Resource.error("Something Went Wrong response failed", null))
+
+        }
+
+    }
+    @Test
+    fun testException() {
+
+        service = mock()
+        defaultApiRepository = DefaultApiRepository(service)
+
+        runBlocking {
+
+
+            Mockito.`when`(service.getSearches("hi", page = "1")).thenReturn(null)
+            val resp = defaultApiRepository.getSearches("hi", page = "1")
+            assertThat(resp).isEqualTo(Resource.error("Something went wrong", null))
 
         }
 

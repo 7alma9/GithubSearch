@@ -24,9 +24,9 @@ created on 6/22/21
             if (response.isSuccessful) {
                 response.body()?.let {
                     return@let Resource.success(it)
-                } ?: Resource.error("Something Went Wrong", null)
+                } ?: Resource.error("Something Went Wrong body is null", null)
             } else {
-                Resource.error("Something Went Wrong", null)
+                Resource.error("Something Went Wrong response failed", null)
 
             }
         } catch (e: Exception) {
