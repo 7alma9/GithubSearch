@@ -1,13 +1,13 @@
 package com.nxb.githubsearchdemo.adapters
 
 import android.view.LayoutInflater
- import android.view.ViewGroup
+import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.nxb.githubsearchdemo.R
- import com.nxb.githubsearchdemo.data.responses.Item
+import com.nxb.githubsearchdemo.data.responses.Item
 import com.nxb.githubsearchdemo.databinding.RepoItemBinding
 import javax.inject.Inject
 
@@ -19,6 +19,11 @@ created on 6/22/21
 class ReposAdapter @Inject constructor() : RecyclerView.Adapter<ReposAdapter.RepoViewHolder>() {
     class RepoViewHolder(val binding: RepoItemBinding) : RecyclerView.ViewHolder(binding.root)
 
+
+    var repoClickCallback: ((Item) -> Unit)? = null
+    fun setClickListener(repoClickCallback: ((Item) -> Unit)) {
+        this.repoClickCallback = repoClickCallback
+    }
 
     private val diffCallback = object : DiffUtil.ItemCallback<Item>() {
         override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
@@ -33,10 +38,10 @@ class ReposAdapter @Inject constructor() : RecyclerView.Adapter<ReposAdapter.Rep
 
     private val differ = AsyncListDiffer(this, diffCallback)
 
-      var repoItems: List<Item>
+    var repoItems: List<Item>
         get() = differ.currentList
         set(value) {
-              differ.submitList( differ.currentList+value)
+            differ.submitList(differ.currentList + value)
         }
 
 
@@ -55,5 +60,8 @@ class ReposAdapter @Inject constructor() : RecyclerView.Adapter<ReposAdapter.Rep
 
     override fun onBindViewHolder(holder: RepoViewHolder, position: Int) {
         holder.binding.data = repoItems[position]
+        holder.itemView.setOnClickListener {
+            repoClickCallback?.invoke(repoItems[position])
+        }
     }
 }

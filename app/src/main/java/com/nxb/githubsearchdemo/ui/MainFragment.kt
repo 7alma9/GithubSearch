@@ -1,6 +1,9 @@
 package com.nxb.githubsearchdemo.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +12,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nxb.githubsearchdemo.R
 import com.nxb.githubsearchdemo.adapters.ReposAdapter
 import com.nxb.githubsearchdemo.data.responses.GithubResponse
+import com.nxb.githubsearchdemo.data.responses.Item
 import com.nxb.githubsearchdemo.databinding.FragmentMainBinding
 import com.nxb.githubsearchdemo.other.Event
 import com.nxb.githubsearchdemo.other.Resource
@@ -29,16 +34,16 @@ created on 6/22/21
  **/
 
 @AndroidEntryPoint
-class MainFragment  @Inject constructor(   val reposAdapter: ReposAdapter) : Fragment() {
+class MainFragment @Inject constructor(val reposAdapter: ReposAdapter) : Fragment() {
 
-     private lateinit var binding: FragmentMainBinding
+    private lateinit var binding: FragmentMainBinding
 
     private val mainViewModel: MainViewModel by viewModels()
 
-     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
@@ -72,9 +77,11 @@ class MainFragment  @Inject constructor(   val reposAdapter: ReposAdapter) : Fra
 
     }
 
-      fun setupRecycler() {
+    fun setupRecycler() {
         binding.rvRepos.apply {
+
             adapter = reposAdapter
+
             layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT)
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -86,16 +93,26 @@ class MainFragment  @Inject constructor(   val reposAdapter: ReposAdapter) : Fra
                 }
             })
         }
-
-
+         reposAdapter.setClickListener {
+             openWebPage(it)
+//            findNavController().navigate(MainFragmentDirections.actionMainFragmentToRepoDetailFragment())
+         }
     }
 
+    fun openWebPage(item: Item){
+        var webpage = Uri.parse(item.htmlUrl)
+        val intent = Intent(Intent.ACTION_VIEW, webpage)
+        if (intent.resolveActivity(requireContext().packageManager) != null) {
+            startActivity(intent)
+        }
+    }
 
-      fun setRepoItems(response: GithubResponse){
+    fun setRepoItems(response: GithubResponse) {
         reposAdapter.repoItems = response.items
         mainViewModel?.setLoadMore(response.items.isNotEmpty())
     }
-      fun startObserving() {
+
+    fun startObserving() {
         mainViewModel?.githubResponse?.observe(viewLifecycleOwner, { event ->
 
             when (event.peakContent().status) {
@@ -103,16 +120,16 @@ class MainFragment  @Inject constructor(   val reposAdapter: ReposAdapter) : Fra
                     event.getContentIfNotHandeled()?.data?.let { response ->
                         setRepoItems(response)
                     }
-                    showHide(binding.progress,false)
+                    showHide(binding.progress, false)
 
 
                 }
                 Status.ERROR -> {
-                    showHide(binding.progress,false)
+                    showHide(binding.progress, false)
 
                 }
                 Status.LOADING -> {
-                    showHide(binding.progress,true)
+                    showHide(binding.progress, true)
                 }
 
             }
@@ -121,6 +138,7 @@ class MainFragment  @Inject constructor(   val reposAdapter: ReposAdapter) : Fra
         })
 
     }
+
     fun showHide(view: View, show: Boolean) {
         view.visibility = if (show) View.VISIBLE else View.GONE
     }

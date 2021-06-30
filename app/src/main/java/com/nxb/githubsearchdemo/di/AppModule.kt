@@ -25,8 +25,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideFragmentFactory(apiRepository: ApiRepository, reposAdapter : ReposAdapter) =
-        CustomFragmentFactory(apiRepository,reposAdapter)
+    fun provideFragmentFactory( reposAdapter : ReposAdapter) =
+        CustomFragmentFactory(reposAdapter)
 
 
     @Singleton

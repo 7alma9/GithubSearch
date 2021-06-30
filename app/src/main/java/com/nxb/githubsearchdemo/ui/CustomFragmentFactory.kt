@@ -11,7 +11,7 @@ import javax.inject.Inject
 created on 6/22/21
  **/
 
-class CustomFragmentFactory @Inject constructor(val apiRepository: ApiRepository,val reposAdapter: ReposAdapter) :FragmentFactory() {
+class CustomFragmentFactory @Inject constructor(val reposAdapter: ReposAdapter) :FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when(className){
             MainFragment::class.java.name -> MainFragment(reposAdapter = reposAdapter )

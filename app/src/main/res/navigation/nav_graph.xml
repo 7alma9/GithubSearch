@@ -9,5 +9,13 @@
         android:id="@+id/mainFragment"
         android:name="com.nxb.githubsearchdemo.ui.MainFragment"
         tools:layout="@layout/fragment_main"
-        android:label="MainFragment" />
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_repoDetailFragment"
+            app:destination="@id/repoDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/repoDetailFragment"
+        android:name="com.nxb.githubsearchdemo.ui.RepoDetailFragment"
+        android:label="RepoDetailFragment" />
 </navigation>
