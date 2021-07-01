@@ -1,5 +1,6 @@
 package com.nxb.githubsearchdemo.ui
 
+import android.content.Intent
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -16,7 +17,7 @@ import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
+import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -54,7 +55,8 @@ import javax.inject.Inject
 
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
-
+    @get:Rule
+    val intentsTestRule = IntentsTestRule(FragmentScenario.EmptyFragmentActivity::class.java)
 
     lateinit var  mainViewModel:MainViewModel
     @Before
@@ -86,7 +88,9 @@ import javax.inject.Inject
         }
         onView(withId(R.id.search_view)).perform(typeSearchViewText("salman",true))
         onView(listMatcher().atPosition(0)).perform(click())
-        intended(toPackage("android.intent.action.VIEW"))
+         intended(allOf(
+                hasAction(Intent.ACTION_VIEW),
+                 toPackage("com.android.chrome")));
     }
 
 
@@ -102,19 +106,6 @@ import javax.inject.Inject
 
     }
 
-    @Test
-    fun testClickOnRepo() {
-         val navController = mock(NavController::class.java)
-
-        launchFragmentInHiltContainer<MainFragment>(fragmentFactory = customFragmentFactory) {
-            Navigation.setViewNavController(requireView(),navController)
-        }
-        onView(withId(R.id.progress)).check(ViewAssertions.matches(CoreMatchers.not(isDisplayed())))
-        onView(withId(R.id.search_view)).perform(typeSearchViewText("salman"))
-        onView(listMatcher().atPosition(0)).check(ViewAssertions.matches(isDisplayed()))
-        onView(listMatcher().atPosition(0)).perform(click())
-            Mockito.verify(navController).navigate(MainFragmentDirections.actionMainFragmentToRepoDetailFragment())
-    }
 
 
     fun listMatcher(): RecyclerViewMatcher {

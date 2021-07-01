@@ -102,6 +102,7 @@ class MainFragment @Inject constructor(val reposAdapter: ReposAdapter) : Fragmen
     fun openWebPage(item: Item){
         var webpage = Uri.parse(item.htmlUrl)
         val intent = Intent(Intent.ACTION_VIEW, webpage)
+        intent.setPackage("com.android.chrome")
         if (intent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(intent)
         }
